@@ -1,82 +1,65 @@
-#include <iostream>
+class SinglyLinkedList:
+    class Node:
+        def __init__(self, key, next=None):
+            self.key = key
+            self.next = next
 
-#define MAX_SIZE 100  
+    def __init__(self, size=100):
+        self.size = size
+        self.nodes = [None] * size  
+        self.head = -1  
+        self.free = 0  
 
-class SinglyLinkedList {
-private:
-    struct Node {
-        int key;
-        int next;
-    };
+        for i in range(size - 1):
+            self.nodes[i] = self.Node(None, i + 1)
+        self.nodes[size - 1] = self.Node(None, -1)
 
-    Node nodes[MAX_SIZE];
-    int head, freeIndex;
+    def allocate_node(self):
+        if self.free == -1:
+            raise MemoryError("Out of space")
+        index = self.free
+        self.free = self.nodes[self.free].next  
+        return index
 
-public:
-    SinglyLinkedList() : head(-1), freeIndex(0) {
-        for (int i = 0; i < MAX_SIZE - 1; i++)
-            nodes[i].next = i + 1;
-        nodes[MAX_SIZE - 1].next = -1;
-    }
+    def free_node(self, index):
+        self.nodes[index].next = self.free
+        self.free = index
 
-    int allocateNode() {
-        if (freeIndex == -1) {
-            std::cerr << "Out of space\n";
-            return -1;
-        }
-        int index = freeIndex;
-        freeIndex = nodes[freeIndex].next;
-        return index;
-    }
+    def insert(self, key):
+        new_node = self.allocate_node()
+        self.nodes[new_node].key = key
+        self.nodes[new_node].next = self.head
+        self.head = new_node
 
-    void freeNode(int index) {
-        nodes[index].next = freeIndex;
-        freeIndex = index;
-    }
+    def remove(self, key):
+        prev, current = -1, self.head
+        while current != -1 and self.nodes[current].key != key:
+            prev, current = current, self.nodes[current].next
 
-    void insert(int key) {
-        int newNode = allocateNode();
-        if (newNode == -1) return;
-        nodes[newNode].key = key;
-        nodes[newNode].next = head;
-        head = newNode;
-    }
+        if current == -1:
+            return  
 
-    void remove(int key) {
-        int prev = -1, current = head;
-        while (current != -1 && nodes[current].key != key) {
-            prev = current;
-            current = nodes[current].next;
-        }
-        if (current == -1) return;
+        if prev == -1:
+            self.head = self.nodes[current].next
+        else:
+            self.nodes[prev].next = self.nodes[current].next
 
-        if (prev == -1) 
-            head = nodes[current].next;
-        else 
-            nodes[prev].next = nodes[current].next;
+        self.free_node(current)
 
-        freeNode(current);
-    }
+    def print_list(self):
+        current = self.head
+        while current != -1:
+            print(self.nodes[current].key, end=" -> ")
+            current = self.nodes[current].next
+        print("NULL")
 
-    void printList() {
-        int current = head;
-        while (current != -1) {
-            std::cout << nodes[current].key << " -> ";
-            current = nodes[current].next;
-        }
-        std::cout << "NULL\n";
-    }
-};
-
-int main() {
-    SinglyLinkedList list;
-    list.insert(10);
-    list.insert(20);
-    list.insert(30);
-    std::cout << "List after insertions: ";
-    list.printList();
-    list.remove(20);
-    std::cout << "List after deletion: ";
-    list.printList();
-    return 0;
-}
+# Example usage:
+sll = SinglyLinkedList()
+sll.insert(10)
+sll.insert(20)
+sll.insert(30)
+print("List after insertions:")
+sll.print_list()
+sll.remove(20)
+print("List after deletion:")
+sll.print_list()
