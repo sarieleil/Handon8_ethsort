@@ -1,52 +1,36 @@
-#include <iostream>
+class Queue:
+    def __init__(self, size=100):
+        self.size = size
+        self.queue = [None] * size
+        self.front = 0
+        self.rear = -1
+        self.count = 0  
 
-#define MAX_SIZE 100  
+    def enqueue(self, x):
+        if self.count == self.size:
+            raise OverflowError("Queue overflow")
+        self.rear = (self.rear + 1) % self.size
+        self.queue[self.rear] = x
+        self.count += 1
 
-class Queue {
-private:
-    int A[MAX_SIZE];
-    int front, rear, size;
-public:
-    Queue() : front(0), rear(-1), size(0) {}
+    def dequeue(self):
+        if self.count == 0:
+            raise IndexError("Queue underflow")
+        self.front = (self.front + 1) % self.size
+        self.count -= 1
 
-    void enqueue(int x) {
-        if (size == MAX_SIZE) {
-            std::cerr << "Queue overflow\n";
-            return;
-        }
-        rear = (rear + 1) % MAX_SIZE;
-        A[rear] = x;
-        size++;
-    }
+    def front_element(self):
+        if self.count == 0:
+            raise IndexError("Queue is empty")
+        return self.queue[self.front]
 
-    void dequeue() {
-        if (size == 0) {
-            std::cerr << "Queue underflow\n";
-            return;
-        }
-        front = (front + 1) % MAX_SIZE;
-        size--;
-    }
+    def is_empty(self):
+        return self.count == 0
 
-    int frontElement() {
-        if (size == 0) {
-            std::cerr << "Queue is empty\n";
-            return -1;
-        }
-        return A[front];
-    }
-
-    bool isEmpty() {
-        return size == 0;
-    }
-};
-
-int main() {
-    Queue q;
-    q.enqueue(10);
-    q.enqueue(20);
-    std::cout << "Front element: " << q.frontElement() << std::endl;
-    q.dequeue();
-    std::cout << "Front element after dequeue: " << q.frontElement() << std::endl;
-    return 0;
-}
+# Example usage:
+q = Queue()
+q.enqueue(10)
+q.enqueue(20)
+print("Front element:", q.front_element())  
+q.dequeue()
+print("Front element after dequeue:", q.front_element())  
