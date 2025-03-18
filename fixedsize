@@ -1,49 +1,32 @@
-#include <iostream>
+class Stack:
+    def __init__(self, size=100):
+        self.size = size
+        self.stack = [None] * size
+        self.top = -1  
 
-#define MAX_SIZE 100  
+    def push(self, x):
+        if self.top == self.size - 1:
+            raise OverflowError("Stack overflow")
+        self.top += 1
+        self.stack[self.top] = x
 
-class Stack {
-private:
-    int A[MAX_SIZE];
-    int top;
-public:
-    Stack() : top(-1) {}
+    def pop(self):
+        if self.top == -1:
+            raise IndexError("Stack underflow")
+        self.top -= 1
 
-    void push(int x) {
-        if (top == MAX_SIZE - 1) {
-            std::cerr << "Stack overflow\n";
-            return;
-        }
-        A[++top] = x;
-    }
+    def top_element(self):
+        if self.top == -1:
+            raise IndexError("Stack is empty")
+        return self.stack[self.top]
 
-    void pop() {
-        if (top == -1) {
-            std::cerr << "Stack underflow\n";
-            return;
-        }
-        top--;
-    }
+    def is_empty(self):
+        return self.top == -1
 
-    int topElement() {
-        if (top == -1) {
-            std::cerr << "Stack is empty\n";
-            return -1;
-        }
-        return A[top];
-    }
-
-    bool isEmpty() {
-        return top == -1;
-    }
-};
-
-int main() {
-    Stack s;
-    s.push(10);
-    s.push(20);
-    std::cout << "Top element: " << s.topElement() << std::endl;
-    s.pop();
-    std::cout << "Top element after pop: " << s.topElement() << std::endl;
-    return 0;
-}
+# Example usage:
+s = Stack()
+s.push(10)
+s.push(20)
+print("Top element:", s.top_element())  
+s.pop()
+print("Top element after pop:", s.top_element())  
