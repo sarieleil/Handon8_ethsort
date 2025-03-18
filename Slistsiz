@@ -1,0 +1,82 @@
+#include <iostream>
+
+#define MAX_SIZE 100  
+
+class SinglyLinkedList {
+private:
+    struct Node {
+        int key;
+        int next;
+    };
+
+    Node nodes[MAX_SIZE];
+    int head, freeIndex;
+
+public:
+    SinglyLinkedList() : head(-1), freeIndex(0) {
+        for (int i = 0; i < MAX_SIZE - 1; i++)
+            nodes[i].next = i + 1;
+        nodes[MAX_SIZE - 1].next = -1;
+    }
+
+    int allocateNode() {
+        if (freeIndex == -1) {
+            std::cerr << "Out of space\n";
+            return -1;
+        }
+        int index = freeIndex;
+        freeIndex = nodes[freeIndex].next;
+        return index;
+    }
+
+    void freeNode(int index) {
+        nodes[index].next = freeIndex;
+        freeIndex = index;
+    }
+
+    void insert(int key) {
+        int newNode = allocateNode();
+        if (newNode == -1) return;
+        nodes[newNode].key = key;
+        nodes[newNode].next = head;
+        head = newNode;
+    }
+
+    void remove(int key) {
+        int prev = -1, current = head;
+        while (current != -1 && nodes[current].key != key) {
+            prev = current;
+            current = nodes[current].next;
+        }
+        if (current == -1) return;
+
+        if (prev == -1) 
+            head = nodes[current].next;
+        else 
+            nodes[prev].next = nodes[current].next;
+
+        freeNode(current);
+    }
+
+    void printList() {
+        int current = head;
+        while (current != -1) {
+            std::cout << nodes[current].key << " -> ";
+            current = nodes[current].next;
+        }
+        std::cout << "NULL\n";
+    }
+};
+
+int main() {
+    SinglyLinkedList list;
+    list.insert(10);
+    list.insert(20);
+    list.insert(30);
+    std::cout << "List after insertions: ";
+    list.printList();
+    list.remove(20);
+    std::cout << "List after deletion: ";
+    list.printList();
+    return 0;
+}
