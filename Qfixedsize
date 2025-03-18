@@ -1,0 +1,52 @@
+#include <iostream>
+
+#define MAX_SIZE 100  
+
+class Queue {
+private:
+    int A[MAX_SIZE];
+    int front, rear, size;
+public:
+    Queue() : front(0), rear(-1), size(0) {}
+
+    void enqueue(int x) {
+        if (size == MAX_SIZE) {
+            std::cerr << "Queue overflow\n";
+            return;
+        }
+        rear = (rear + 1) % MAX_SIZE;
+        A[rear] = x;
+        size++;
+    }
+
+    void dequeue() {
+        if (size == 0) {
+            std::cerr << "Queue underflow\n";
+            return;
+        }
+        front = (front + 1) % MAX_SIZE;
+        size--;
+    }
+
+    int frontElement() {
+        if (size == 0) {
+            std::cerr << "Queue is empty\n";
+            return -1;
+        }
+        return A[front];
+    }
+
+    bool isEmpty() {
+        return size == 0;
+    }
+};
+
+int main() {
+    Queue q;
+    q.enqueue(10);
+    q.enqueue(20);
+    std::cout << "Front element: " << q.frontElement() << std::endl;
+    q.dequeue();
+    std::cout << "Front element after dequeue: " << q.frontElement() << std::endl;
+    return 0;
+}
